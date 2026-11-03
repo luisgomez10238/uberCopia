@@ -16,14 +16,14 @@ export const validarCorreo = (correo) => {
 };
 
 export const validarPlaca = (placa) => {
-  return /^[A-Z]{3}\d{3}$/.test(placa);
+  return /^[A-Z]{3}\d{3}$/.test(placa.trim().toUpperCase());
 };
 
 export const validarFecha = (fecha) => {
   const anioActual = new Date().getFullYear();
 
   return /^\d{4}$/.test(fecha) &&
-    Number(anio) <= anioActual;
+    Number(fecha) <= anioActual;
 };
 
 export const validarCapacidad = (capacidad, categoria) => {
