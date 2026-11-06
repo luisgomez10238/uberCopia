@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import {
   View,
@@ -20,6 +19,7 @@ const DateField = ({
   const fechaInicial = value || new Date(2000, 0, 1);
 
   const manejarCambio = (event, fechaSeleccionada) => {
+    // Android: el selector es un diálogo que se cierra al elegir o cancelar.
     if (Platform.OS === 'android') {
       setMostrarSelector(false);
     }
@@ -31,6 +31,15 @@ const DateField = ({
     if (fechaSeleccionada) {
       onChange(fechaSeleccionada);
     }
+  };
+
+  // iOS: el selector (spinner) queda incrustado en la pantalla y no se cierra
+  // solo, así que se cierra con el botón "Listo".
+  const cerrarSelectorIOS = () => {
+    if (!value) {
+      onChange(fechaInicial); // si no movió el selector, confirma la fecha mostrada
+    }
+    setMostrarSelector(false);
   };
 
   return (
@@ -59,6 +68,12 @@ const DateField = ({
           maximumDate={new Date()}
           onChange={manejarCambio}
         />
+      )}
+
+      {mostrarSelector && Platform.OS === 'ios' && (
+        <Pressable style={styles.botonListo} onPress={cerrarSelectorIOS}>
+          <Text style={styles.textoListo}>Listo</Text>
+        </Pressable>
       )}
 
       {error ? (
@@ -98,6 +113,19 @@ const styles = StyleSheet.create({
   placeholder: {
     fontSize: 16,
     color: '#888888',
+  },
+
+  botonListo: {
+    alignSelf: 'flex-end',
+    marginTop: 4,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+  },
+
+  textoListo: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#007AFF',
   },
 
   inputError: {
