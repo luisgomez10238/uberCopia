@@ -15,7 +15,7 @@ import ImagePickerField from '../components/ImagePickerField';
 import CheckboxField from '../components/CheckboxField';
 import { requiereRevision } from '../utils/validators';
 import { PRICING } from '../config/pricing';
-import { registrarConductor } from '../services/driverService';
+import { registrarConductor } from '../services/driverservice';
 
 export default function DocumentosScreen() {
   const {
