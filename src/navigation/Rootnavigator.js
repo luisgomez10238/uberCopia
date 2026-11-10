@@ -6,6 +6,7 @@ import LoginScreen from '../screens/LoginScreen';
 import RegistroConductorScreen from '../screens/RegistroConductorScreen';
 import PendienteScreen from '../screens/Pendientescreen';
 import InicioScreen from '../screens/Inicioscreen';
+import GananciasScreen from '../screens/GananciasScreen';
 
 const Stack = createNativeStackNavigator();
 

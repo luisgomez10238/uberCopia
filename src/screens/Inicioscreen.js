@@ -3,8 +3,8 @@ import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useSession } from '../context/Sessioncontext';
 
-// Pantalla provisional: aquí irán el mapa y el interruptor Disponible / No disponible.
-export default function InicioScreen() {
+
+export default function InicioScreen({ navigation }) {
   const { conductor, cerrarSesion } = useSession();
 
   return (
