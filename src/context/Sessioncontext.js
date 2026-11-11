@@ -9,6 +9,7 @@ import React, {
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { auth, db } from '../config/firebase';
+import { actualizarDisponibilidad } from '../services/driverStatusService';
 
 const SessionContext = createContext(null);
 
@@ -50,7 +51,17 @@ export const SessionProvider = ({ children }) => {
     return cancelar; // función de limpieza
   }, [usuario?.uid]);
 
-  const cerrarSesion = useCallback(() => signOut(auth), []);
+  // Antes de salir queda "No disponible" (después ya no habría permiso para escribir)
+  const cerrarSesion = useCallback(async () => {
+    if (usuario) {
+      try {
+        await actualizarDisponibilidad(usuario.uid, false);
+      } catch (e) {
+        // si falla (sin conexión), igual se cierra la sesión
+      }
+    }
+    await signOut(auth);
+  }, [usuario]);
 
   const value = useMemo(
     () => ({

@@ -9,6 +9,8 @@ import {
   StyleSheet,
 } from 'react-native';
 import MapView from 'react-native-maps';
+import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useSession } from '../context/SessionContext';
 import useDriverLocation from '../Hooks/useDriverLocation';
@@ -21,9 +23,11 @@ import {
   guardarUltimoEstadoDisponible,
 } from '../utils/preferences';
 
-// AI-assisted: see docs/AI_LOG.md #.
+
+// AI-assisted:
 export default function InicioScreen() {
-  const { usuario, conductor, cerrarSesion } = useSession();
+  const { usuario, conductor } = useSession();
+  const navigation = useNavigation();
   const uid = usuario.uid;
   const insets = useSafeAreaInsets();
   const mapRef = useRef(null);
@@ -104,12 +108,6 @@ export default function InicioScreen() {
     [uid, conductor?.status]
   );
 
-  const salir = async () => {
-    // Antes de cerrar sesión (después ya no habría permiso para escribir)
-    await actualizarDisponibilidad(uid, false).catch(() => {});
-    cerrarSesion();
-  };
-
   const nombre = conductor?.fullName?.split(' ')[0] ?? '';
 
   return (
@@ -140,10 +138,11 @@ export default function InicioScreen() {
 
       {/* Barra superior */}
       <View style={[styles.barraSuperior, { top: insets.top + 10 }]}>
-        <Text style={styles.saludo}>Hola{nombre ? `, ${nombre}` : ''}</Text>
-        <Pressable onPress={salir}>
-          <Text style={styles.cerrarSesion}>Cerrar sesión</Text>
+        <Pressable onPress={() => navigation.openDrawer()} hitSlop={12}>
+          <Ionicons name="menu" size={26} color="#172B4D" />
         </Pressable>
+        <Text style={styles.saludo}>Hola{nombre ? `, ${nombre}` : ''}</Text>
+        <View style={styles.espaciador} />
       </View>
 
       {/* Panel de disponibilidad */}
@@ -208,7 +207,7 @@ const styles = StyleSheet.create({
     borderColor: '#E4EBF5',
   },
   saludo: { fontSize: 16, fontWeight: 'bold', color: '#172B4D' },
-  cerrarSesion: { fontSize: 14, fontWeight: '600', color: '#145BB8' },
+  espaciador: { width: 26 },
   panel: {
     position: 'absolute',
     left: 0,

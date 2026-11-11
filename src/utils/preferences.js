@@ -19,3 +19,22 @@ export const guardarUltimoEstadoDisponible = async (uid, disponible) => {
     console.warn('[preferences] no se pudo guardar el estado', error?.message);
   }
 };
+
+// Idioma de la app ('es' | 'en'): preferencia, no dato sensible
+const CLAVE_IDIOMA = '@uberclone/idioma';
+
+export const leerIdioma = async () => {
+  try {
+    return (await AsyncStorage.getItem(CLAVE_IDIOMA)) || 'es';
+  } catch (error) {
+    return 'es';
+  }
+};
+
+export const guardarIdioma = async (idioma) => {
+  try {
+    await AsyncStorage.setItem(CLAVE_IDIOMA, idioma);
+  } catch (error) {
+    console.warn('[preferences] no se pudo guardar el idioma', error?.message);
+  }
+};

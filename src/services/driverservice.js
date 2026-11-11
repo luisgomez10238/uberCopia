@@ -2,6 +2,8 @@ import { createUserWithEmailAndPassword, deleteUser } from 'firebase/auth';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { auth, db } from '../config/firebase';
 import { subirImagen } from './cloudinary';
+import { PRICING } from '../config/pricing';
+import { requiereRevision } from '../utils/validators';
 
 // El modelo de datos usa economy / xl / premium
 const CATEGORIAS = {
@@ -49,27 +51,51 @@ const paso = async (nombre, funcion) => {
  * Devuelve el uid del conductor.
  */
 export async function registrarConductor(registro, contrasena) {
-  const { personal, vehiculo } = registro;
+  const { personal, vehiculo, documentos } = registro;
   let usuario = null;
 
+  // Si cambió el año del vehículo, puede quedar una revisión de antes que ya no aplica
+  const aplicaRevision = requiereRevision(vehiculo.anio) && !!documentos.revisionFoto;
+
   try {
-    const { fechaTexto, categoria } = await paso('preparar los datos', async () => ({
-      fechaTexto: aTextoFecha(personal.fechaNacimiento),
-      categoria: CATEGORIAS[vehiculo.categoria],
-    }));
+    const { fechaTexto, categoria, vencimientos } = await paso(
+      'preparar los datos',
+      async () => ({
+        fechaTexto: aTextoFecha(personal.fechaNacimiento),
+        categoria: CATEGORIAS[vehiculo.categoria],
+        vencimientos: {
+          licencia: aTextoFecha(documentos.licenciaVencimiento),
+          soat: aTextoFecha(documentos.soatVencimiento),
+          // La revisión técnico-mecánica solo existe si le aplica al vehículo
+          revision: aplicaRevision
+            ? aTextoFecha(documentos.revisionVencimiento)
+            : null,
+        },
+      })
+    );
 
     const credencial = await paso('crear la cuenta (Firebase Auth)', () =>
       createUserWithEmailAndPassword(auth, personal.correo.trim(), contrasena)
     );
     usuario = credencial.user;
 
-    const [profilePhotoUrl, vehiclePhotoUrl] = await paso(
-      'subir las fotos (Cloudinary)',
-      () =>
-        Promise.all([
-          subirImagen(personal.fotoPerfil, `drivers/${usuario.uid}`),
-          subirImagen(vehiculo.fotoVehiculo, `drivers/${usuario.uid}`),
-        ])
+    const carpeta = `drivers/${usuario.uid}`;
+    const [
+      profilePhotoUrl,
+      vehiclePhotoUrl,
+      licensePhotoUrl,
+      soatPhotoUrl,
+      reviewPhotoUrl,
+    ] = await paso('subir las fotos (Cloudinary)', () =>
+      Promise.all([
+        subirImagen(personal.fotoPerfil, carpeta),
+        subirImagen(vehiculo.fotoVehiculo, carpeta),
+        subirImagen(documentos.licenciaFoto, carpeta),
+        subirImagen(documentos.soatFoto, carpeta),
+        aplicaRevision
+          ? subirImagen(documentos.revisionFoto, carpeta)
+          : Promise.resolve(null),
+      ])
     );
 
     await paso('guardar en Firestore', () =>
@@ -93,6 +119,23 @@ export async function registrarConductor(registro, contrasena) {
           capacity: Number(vehiculo.capacidad),
           photoUrl: vehiclePhotoUrl,
         },
+        documents: {
+          license: {
+            number: documentos.licenciaNumero,
+            photoUrl: licensePhotoUrl,
+            expiresAt: vencimientos.licencia,
+          },
+          soat: {
+            photoUrl: soatPhotoUrl,
+            expiresAt: vencimientos.soat,
+          },
+          technicalReview: reviewPhotoUrl
+            ? { photoUrl: reviewPhotoUrl, expiresAt: vencimientos.revision }
+            : null,
+        },
+        mercadoPagoEmail: documentos.correoMercadoPago.trim(),
+        acceptedTerms: true,
+        acceptedCommissionRate: PRICING.commissionRate,
         status: 'pending', // pasa a "approved" cambiándolo a mano en Firestore
         isAvailable: false,
         createdAt: serverTimestamp(),

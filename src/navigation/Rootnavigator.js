@@ -4,10 +4,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useSession } from '../context/SessionContext';
 import LoginScreen from '../screens/login/LoginScreen';
 import RegistroConductorScreen from '../screens/login/RegistroConductorScreen';
-import PendienteScreen from '../screens/Pendientescreen';
-import InicioScreen from '../screens/Inicioscreen';
-import GananciasScreen from '../screens/ganancias/GananciasScreen';
-import HistorialScreen from '../screens/historial/HistorialScreen';
+import PendienteScreen from '../screens/PendienteScreen';
+import DriverDrawer from './DriverDrawer';
 
 const Stack = createNativeStackNavigator();
 
@@ -32,11 +30,7 @@ export default function RootNavigator() {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       {tieneSesion ? (
         conductor.status === 'approved' ? (
-          <>
-            <Stack.Screen name="Inicio" component={InicioScreen} />
-            <Stack.Screen name="Ganancias" component={GananciasScreen} />
-            <Stack.Screen name="Historial" component={HistorialScreen}/>
-          </>
+          <Stack.Screen name="Drawer" component={DriverDrawer} />
         ) : (
           <Stack.Screen name="Pendiente" component={PendienteScreen} />
         )
