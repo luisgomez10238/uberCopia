@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 
 import { Ionicons } from '@expo/vector-icons';
-import useEarnings from '../Hooks/useEarnings';
+import useEarnings from '../../Hooks/useEarnings';
 
 // Formatea los valores en pesos colombianos.
 const formatearDinero = (valor) => {

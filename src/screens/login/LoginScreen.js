@@ -9,9 +9,9 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../config/firebase';
-import FormField from '../components/FormField';
-import { validarCorreo } from '../utils/validators';
+import { auth } from '../../config/firebase';
+import FormField from '../../components/Registro/FormField';
+import { validarCorreo } from '../../utils/validators';
 
 const MENSAJES_AUTH = {
   'auth/invalid-credential': 'Correo o contraseña incorrectos',

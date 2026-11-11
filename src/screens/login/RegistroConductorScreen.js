@@ -3,9 +3,9 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 
 import DatosPersonalesScreen from './Datospersonalesscreen';
-import VehiculoScreen from './Vehiculoscreen';
+import VehiculoScreen from '../Vehiculoscreen';
 import DocumentosScreen from './Documentosscreen';
-import { useRegistration } from '../context/RegistrationContext';
+import { useRegistration } from '../../context/RegistrationContext';
 
 const Tab = createBottomTabNavigator();
 

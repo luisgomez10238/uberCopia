@@ -2,11 +2,12 @@ import React from 'react';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useSession } from '../context/Sessioncontext';
-import LoginScreen from '../screens/LoginScreen';
-import RegistroConductorScreen from '../screens/RegistroConductorScreen';
+import LoginScreen from '../screens/login/LoginScreen';
+import RegistroConductorScreen from '../screens/login/RegistroConductorScreen';
 import PendienteScreen from '../screens/Pendientescreen';
 import InicioScreen from '../screens/Inicioscreen';
-import GananciasScreen from '../screens/GananciasScreen';
+import GananciasScreen from '../screens/ganancias/GananciasScreen';
+import Historialscreen from '../screens/historial/HistorialScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -31,7 +32,11 @@ export default function RootNavigator() {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       {tieneSesion ? (
         conductor.status === 'approved' ? (
-          <Stack.Screen name="Inicio" component={InicioScreen} />
+          <>
+            <Stack.Screen name="Inicio" component={InicioScreen} />
+            <Stack.Screen name="Ganancias" component={GananciasScreen} />
+            <Stack.Screen name="Historial" component={HistorialScreen}/>
+          </>
         ) : (
           <Stack.Screen name="Pendiente" component={PendienteScreen} />
         )

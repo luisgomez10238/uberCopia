@@ -8,14 +8,14 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useRegistration } from '../context/RegistrationContext';
-import FormField from '../components/FormField';
-import DateField from '../components/DateField';
-import ImagePickerField from '../components/ImagePickerField';
-import CheckboxField from '../components/CheckboxField';
-import { requiereRevision } from '../utils/validators';
-import { PRICING } from '../config/pricing';
-import { registrarConductor } from '../services/driverservice';
+import { useRegistration } from '../../context/RegistrationContext';
+import FormField from '../../components/Registro/FormField';
+import DateField from '../../components/Registro/DateField';
+import ImagePickerField from '../../components/Registro/ImagePickerField';
+import CheckboxField from '../../components/Registro/CheckboxField';
+import { requiereRevision } from '../../utils/validators';
+import { PRICING } from '../../config/pricing';
+import { registrarConductor } from '../../services/driverservice';
 
 export default function DocumentosScreen() {
   const {
