@@ -159,6 +159,23 @@ export const reglas = {
       personal.idioma === 'es' || personal.idioma === 'en'
         ? null
         : 'Selecciona un idioma',
+
+    // La contraseña no se recorta ni se normaliza; Firebase exige mínimo 6
+    contrasena: ({ personal }) => {
+      const { contrasena } = personal;
+      if (vacio(contrasena)) return 'La contraseña es obligatoria';
+      if (contrasena.length < 6) {
+        return 'La contraseña debe tener mínimo 6 caracteres';
+      }
+      return null;
+    },
+
+    confirmacion: ({ personal }) => {
+      const { confirmacion, contrasena } = personal;
+      if (vacio(confirmacion)) return 'Confirma tu contraseña';
+      if (confirmacion !== contrasena) return 'Las contraseñas no coinciden';
+      return null;
+    },
   },
 
   vehiculo: {

@@ -13,10 +13,14 @@ const DateField = ({
   value,
   onChange,
   error,
+  placeholder = 'Selecciona tu fecha de nacimiento',
+  fechaPorDefecto = new Date(2000, 0, 1),
+  minimumDate,
+  maximumDate = new Date(), // por defecto no permite fechas futuras; pasa null para permitirlas
 }) => {
   const [mostrarSelector, setMostrarSelector] = useState(false);
 
-  const fechaInicial = value || new Date(2000, 0, 1);
+  const fechaInicial = value || fechaPorDefecto;
 
   const manejarCambio = (event, fechaSeleccionada) => {
     // Android: el selector es un diálogo que se cierra al elegir o cancelar.
@@ -56,7 +60,7 @@ const DateField = ({
         <Text style={value ? styles.fecha : styles.placeholder}>
           {value
             ? value.toLocaleDateString('es-CO')
-            : 'Selecciona tu fecha de nacimiento'}
+            : placeholder}
         </Text>
       </Pressable>
 
@@ -65,7 +69,8 @@ const DateField = ({
           value={fechaInicial}
           mode="date"
           display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-          maximumDate={new Date()}
+          minimumDate={minimumDate}
+          maximumDate={maximumDate || undefined}
           onChange={manejarCambio}
         />
       )}

@@ -1,13 +1,12 @@
-
 import React from 'react';
 import { ScrollView, StyleSheet, View, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useRegistration } from '../context/RegistrationContext';
-import FormField from '../components/Registro/FormField';
-import DropdownField from '../components/Registro/DropdownField';
-import DateField from '../components/Registro/DateField';
-import ImagePickerField from '../components/Registro/ImagePickerField';
-import { GENEROS, IDIOMAS } from '../constants/options';
+import { useRegistration } from '../../context/RegistrationContext';
+import FormField from '../../components/Registro/FormField';
+import DropdownField from '../../components/Registro/DropdownField';
+import DateField from '../../components/Registro/DateField';
+import ImagePickerField from '../../components/Registro/ImagePickerField';
+import { GENEROS, IDIOMAS } from '../../constants/options';
 
 export default function DatosPersonalesScreen() {
   const { registro, errores, actualizarPersonal, tocarCampo } = useRegistration();
@@ -124,6 +123,39 @@ export default function DatosPersonalesScreen() {
           onValueChange={(valor) => actualizarPersonal('idioma', valor)}
           options={IDIOMAS}
           error={error.idioma}
+        />
+      </View>
+
+      <View style={styles.tarjeta}>
+        <View style={styles.encabezadoSeccion}>
+          <Ionicons name="lock-closed-outline" size={22} color="#1769D2" />
+          <Text style={styles.tituloSeccion}>Acceso a tu cuenta</Text>
+        </View>
+
+        <Text style={styles.descripcion}>
+          Con tu correo y esta contraseña iniciarás sesión en la app.
+        </Text>
+
+        <FormField
+          label="Contraseña"
+          value={personal.contrasena}
+          onChangeText={(texto) => actualizarPersonal('contrasena', texto)}
+          onBlur={() => tocarCampo('personal', 'contrasena')}
+          error={error.contrasena}
+          secureTextEntry
+          autoCorrect={false}
+          placeholder="Mínimo 6 caracteres"
+        />
+
+        <FormField
+          label="Confirmar contraseña"
+          value={personal.confirmacion}
+          onChangeText={(texto) => actualizarPersonal('confirmacion', texto)}
+          onBlur={() => tocarCampo('personal', 'confirmacion')}
+          error={error.confirmacion}
+          secureTextEntry
+          autoCorrect={false}
+          placeholder="Repite la contraseña"
         />
       </View>
     </ScrollView>

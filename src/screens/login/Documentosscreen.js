@@ -10,7 +10,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { useRegistration } from '../../context/RegistrationContext';
 import FormField from '../../components/Registro/FormField';
-import DateField from '../../components/Registro/DateField';
+import DateField from '../../components/Registro//DateField';
 import ImagePickerField from '../../components/Registro/ImagePickerField';
 import CheckboxField from '../../components/Registro/CheckboxField';
 import { requiereRevision } from '../../utils/validators';

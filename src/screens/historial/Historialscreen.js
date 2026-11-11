@@ -1,3 +1,4 @@
+
 import React from 'react';
 import {
   View,
@@ -10,14 +11,14 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-import { useSession } from '../context/Sessioncontext';
-import useTripHistory from '../hooks/useTripHistory';
+import { useSession } from '../../context/SessionContext';
+import useTripHistory from '../../Hooks/useTripHistory';
 
-import FiltroFecha from '../components/historial/FiltroFecha';
-import FiltroPago from '../components/historial/FiltroPago';
-import ViajeCard from '../components/historial/ViajeCard';
+import FiltroFecha from '../../components/Historial/FiltroFecha';
+import FiltroPago from '../../components/Historial/FiltroFecha';
+import ViajeCard from '../../components/Historial/ViajeCard';
 
-export default function Historialscreen() {
+export default function HistorialScreen() {
   const { usuario } = useSession();
 
   const {

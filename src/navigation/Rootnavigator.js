@@ -1,13 +1,13 @@
 import React from 'react';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { useSession } from '../context/Sessioncontext';
+import { useSession } from '../context/SessionContext';
 import LoginScreen from '../screens/login/LoginScreen';
 import RegistroConductorScreen from '../screens/login/RegistroConductorScreen';
 import PendienteScreen from '../screens/Pendientescreen';
 import InicioScreen from '../screens/Inicioscreen';
 import GananciasScreen from '../screens/ganancias/GananciasScreen';
-import Historialscreen from '../screens/historial/HistorialScreen';
+import HistorialScreen from '../screens/historial/HistorialScreen';
 
 const Stack = createNativeStackNavigator();
 

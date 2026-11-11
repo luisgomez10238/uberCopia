@@ -1,4 +1,6 @@
+
 import { useEffect, useMemo, useState } from 'react';
+
 import {
   collection,
   onSnapshot,
@@ -7,9 +9,9 @@ import {
 } from 'firebase/firestore';
 
 import { db } from '../config/firebase';
-import { useSession } from '../context/Sessioncontext';
+import { useSession } from '../context/SessionContext';
 
-// Convierte la fecha almacenada en Firestore a un objeto Date.
+// Convierte la fecha del viaje en un objeto Date.
 const obtenerFecha = (viaje) => {
   const fecha = viaje.completedAt || viaje.createdAt;
 
@@ -24,32 +26,35 @@ const obtenerFecha = (viaje) => {
   return Number.isNaN(resultado.getTime()) ? null : resultado;
 };
 
-// Convierte los valores monetarios a números.
+// Convierte los valores monetarios en números.
 const obtenerNumero = (valor) => {
   const numero = Number(valor);
+
   return Number.isFinite(numero) ? numero : 0;
 };
 
-// Solo contamos viajes que terminaron correctamente.
+// Comprueba si el viaje terminó correctamente.
 const esViajeFinalizado = (viaje) => {
-  return ['completed', 'paid'].includes(
-    String(viaje.status || '').toLowerCase()
-  );
+  const estado = String(viaje.status || '').toLowerCase();
+
+  return ['completed', 'paid'].includes(estado);
 };
 
-// Calcula el inicio y el final de cada periodo.
+// Obtiene las fechas de inicio y final de cada periodo.
 const obtenerRango = (periodo) => {
   const ahora = new Date();
-  let inicio = new Date(ahora);
-  let fin = new Date(ahora);
 
+  const inicio = new Date(ahora);
   inicio.setHours(0, 0, 0, 0);
+
+  let fin = new Date(inicio);
 
   if (periodo === 'hoy') {
     fin.setDate(fin.getDate() + 1);
   }
 
   if (periodo === 'semana') {
+    // La semana comienza el lunes.
     const diasDesdeLunes = (inicio.getDay() + 6) % 7;
 
     inicio.setDate(inicio.getDate() - diasDesdeLunes);
@@ -68,7 +73,7 @@ const obtenerRango = (periodo) => {
   return { inicio, fin };
 };
 
-// Calcula los indicadores de un grupo de viajes.
+// Calcula los seis indicadores de un conjunto de viajes.
 const calcularResumen = (viajes) => {
   const totalViajes = viajes.length;
 
@@ -92,17 +97,32 @@ const calcularResumen = (viajes) => {
     0
   );
 
+  const promedioPorViaje =
+    totalViajes > 0 ? gananciaNeta / totalViajes : 0;
+
   return {
     totalViajes,
     totalFacturado,
     totalComisiones,
     totalPropinas,
     gananciaNeta,
-    promedioPorViaje:
-      totalViajes > 0 ? gananciaNeta / totalViajes : 0,
+    promedioPorViaje,
   };
 };
 
+// Determina si un pago electrónico está confirmado.
+const pagoElectronicoConfirmado = (viaje) => {
+  const estadoPago = String(
+    viaje.paymentStatus || ''
+  ).toLowerCase();
+
+  return (
+    ['paid', 'approved', 'aprobado', 'completed'].includes(estadoPago) ||
+    String(viaje.status || '').toLowerCase() === 'paid'
+  );
+};
+
+// Hook personalizado para consultar y calcular las ganancias.
 export default function useEarnings() {
   const { usuario } = useSession();
 
@@ -110,7 +130,7 @@ export default function useEarnings() {
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState(null);
 
-  // Escucha en tiempo real los viajes del conductor actual.
+  // Escucha en tiempo real los viajes del conductor.
   useEffect(() => {
     if (!usuario?.uid) {
       setViajes([]);
@@ -138,17 +158,21 @@ export default function useEarnings() {
         setCargando(false);
       },
       (errorFirebase) => {
-        console.error('Error al consultar ganancias:', errorFirebase);
+        console.error(
+          'Error al consultar las ganancias:',
+          errorFirebase
+        );
+
         setError(errorFirebase.message);
         setCargando(false);
       }
     );
 
-    // Detiene la suscripción cuando el hook se desmonta.
+    // Cancelamos la escucha cuando el componente se desmonta.
     return cancelar;
   }, [usuario?.uid]);
 
-  // Excluimos los viajes cancelados o que no han finalizado.
+  // Filtra los viajes finalizados y los ordena por fecha.
   const viajesFinalizados = useMemo(() => {
     return viajes
       .filter(esViajeFinalizado)
@@ -160,65 +184,61 @@ export default function useEarnings() {
       });
   }, [viajes]);
 
-  // Ganancias del día.
+  // Calcula los indicadores de hoy.
   const hoy = useMemo(() => {
     const { inicio, fin } = obtenerRango('hoy');
 
-    const filtrados = viajesFinalizados.filter((viaje) => {
+    const viajesHoy = viajesFinalizados.filter((viaje) => {
       const fecha = obtenerFecha(viaje);
 
       return fecha && fecha >= inicio && fecha < fin;
     });
 
-    return calcularResumen(filtrados);
+    return calcularResumen(viajesHoy);
   }, [viajesFinalizados]);
 
-  // Ganancias de la semana (desde el lunes).
+  // Calcula los indicadores de la semana.
   const semana = useMemo(() => {
     const { inicio, fin } = obtenerRango('semana');
 
-    const filtrados = viajesFinalizados.filter((viaje) => {
+    const viajesSemana = viajesFinalizados.filter((viaje) => {
       const fecha = obtenerFecha(viaje);
 
       return fecha && fecha >= inicio && fecha < fin;
     });
 
-    return calcularResumen(filtrados);
+    return calcularResumen(viajesSemana);
   }, [viajesFinalizados]);
 
-  // Ganancias del mes actual.
+  // Calcula los indicadores del mes.
   const mes = useMemo(() => {
     const { inicio, fin } = obtenerRango('mes');
 
-    const filtrados = viajesFinalizados.filter((viaje) => {
+    const viajesMes = viajesFinalizados.filter((viaje) => {
       const fecha = obtenerFecha(viaje);
 
       return fecha && fecha >= inicio && fecha < fin;
     });
 
-    return calcularResumen(filtrados);
+    return calcularResumen(viajesMes);
   }, [viajesFinalizados]);
 
-  // Saldo: ganancias de pagos electrónicos confirmados
-  // menos las comisiones de los viajes en efectivo recibidos.
+  // Calcula el saldo del conductor.
   const saldo = useMemo(() => {
     return viajesFinalizados.reduce((total, viaje) => {
-      const metodo = String(viaje.paymentMethod || '').toLowerCase();
-      const estadoPago = String(viaje.paymentStatus || '').toLowerCase();
+      const metodoPago = String(
+        viaje.paymentMethod || ''
+      ).toLowerCase();
 
-      const pagoConfirmado =
-        ['paid', 'approved', 'aprobado'].includes(estadoPago) ||
-        viaje.status === 'paid';
+      // En efectivo, el conductor recibe el dinero
+      // y debe descontar la comisión de la plataforma.
+      if (['cash', 'efectivo'].includes(metodoPago)) {
+        return total - obtenerNumero(viaje.commission);
+      }
 
-      if (metodo === 'cash') {
-        const efectivoRecibido =
-          pagoConfirmado ||
-          ['cash', 'efectivo'].includes(estadoPago);
-
-        if (efectivoRecibido) {
-          return total - obtenerNumero(viaje.commission);
-        }
-      } else if (pagoConfirmado) {
+      // En pagos electrónicos, sumamos la ganancia
+      // cuando la pasarela confirma el pago.
+      if (pagoElectronicoConfirmado(viaje)) {
         return total + obtenerNumero(viaje.driverEarnings);
       }
 
