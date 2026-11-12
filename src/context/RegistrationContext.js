@@ -1,3 +1,4 @@
+// AI-assisted: see docs/AI_LOG.md #2
 import React, {
   createContext,
   useContext,
@@ -19,6 +20,8 @@ const datosIniciales = {
     genero: '',
     correo: '',
     idioma: 'es',
+    contrasena: '',
+    confirmacion: '',
   },
   vehiculo: {
     categoria: '',
@@ -30,7 +33,17 @@ const datosIniciales = {
     capacidad: '',
     fotoVehiculo: null,
   },
-  documentos: {}, // pestaña 3: se llenará en la siguiente entrega
+  documentos: {
+    licenciaNumero: '',
+    licenciaFoto: null,
+    licenciaVencimiento: null,
+    soatFoto: null,
+    soatVencimiento: null,
+    revisionFoto: null,
+    revisionVencimiento: null,
+    correoMercadoPago: '',
+    aceptaTerminos: false,
+  },
 };
 
 const tocadosIniciales = { personal: {}, vehiculo: {}, documentos: {} };
@@ -40,6 +53,15 @@ const tocadosIniciales = { personal: {}, vehiculo: {}, documentos: {} };
 const CAMPOS_SIN_BLUR = {
   personal: ['fotoPerfil', 'fechaNacimiento', 'genero', 'idioma'],
   vehiculo: ['categoria', 'color', 'fotoVehiculo'],
+  documentos: [
+    'licenciaFoto',
+    'licenciaVencimiento',
+    'soatFoto',
+    'soatVencimiento',
+    'revisionFoto',
+    'revisionVencimiento',
+    'aceptaTerminos',
+  ],
 };
 
 export const RegistrationProvider = ({ children }) => {
@@ -69,6 +91,11 @@ export const RegistrationProvider = ({ children }) => {
 
   const actualizarVehiculo = useCallback(
     (campo, valor) => actualizarSeccion('vehiculo', campo, valor),
+    [actualizarSeccion]
+  );
+
+  const actualizarDocumentos = useCallback(
+    (campo, valor) => actualizarSeccion('documentos', campo, valor),
     [actualizarSeccion]
   );
 
@@ -142,8 +169,7 @@ export const RegistrationProvider = ({ children }) => {
     return resultado;
   }, [todosLosErrores]);
 
-  // OJO: mientras `documentos` no tenga reglas, esta sección cuenta como válida.
-  // No habilites "Enviar registro" con esto hasta implementar la pestaña 3.
+  // El formulario es válido cuando las tres pestañas lo son
   const formularioValido =
     seccionValida.personal && seccionValida.vehiculo && seccionValida.documentos;
 
@@ -155,6 +181,7 @@ export const RegistrationProvider = ({ children }) => {
       formularioValido,
       actualizarPersonal,
       actualizarVehiculo,
+      actualizarDocumentos,
       tocarCampo,
       tocarSeccion,
       limpiarRegistro,
@@ -166,6 +193,7 @@ export const RegistrationProvider = ({ children }) => {
       formularioValido,
       actualizarPersonal,
       actualizarVehiculo,
+      actualizarDocumentos,
       tocarCampo,
       tocarSeccion,
       limpiarRegistro,

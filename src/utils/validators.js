@@ -1,3 +1,4 @@
+// AI-assisted: see docs/AI_LOG.md #2
 export const validarNombre = (nombre) => {
   return /^[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s]{1,50}$/.test(nombre.trim());
 };
@@ -60,10 +61,50 @@ export const validarFechaNacimiento = (fecha) => {
 };
 
 
+/* -------------------------------------------------------------------------- */
+/*  Documentos (pestaña 3)                                                    */
+/* -------------------------------------------------------------------------- */
+
+// Años de antigüedad desde los cuales el vehículo debe tener revisión
+// técnico-mecánica. CONFIRMA este valor con la normativa o con tu profesor.
+export const ANIOS_PARA_REVISION = 6;
+
+// "Posterior a hoy": la fecha de vencimiento debe ser a partir de mañana.
+export const validarFechaVencimiento = (fecha) => {
+  if (!(fecha instanceof Date) || Number.isNaN(fecha.getTime())) {
+    return false;
+  }
+
+  const hoy = new Date();
+  hoy.setHours(0, 0, 0, 0);
+
+  const vencimiento = new Date(fecha);
+  vencimiento.setHours(0, 0, 0, 0);
+
+  return vencimiento > hoy;
+};
+
+// La revisión técnico-mecánica aplica según el año del vehículo.
+export const requiereRevision = (anio) => {
+  const texto = String(anio ?? '');
+  return (
+    validarFecha(texto) &&
+    new Date().getFullYear() - Number(texto) >= ANIOS_PARA_REVISION
+  );
+};
+
 const ANIO_MINIMO = 1980;
 
 const vacio = (valor) =>
   valor === null || valor === undefined || String(valor).trim() === '';
+
+const errorVencimiento = (fecha, de) => {
+  if (!fecha) return `La fecha de vencimiento ${de} es obligatoria`;
+  if (!validarFechaVencimiento(fecha)) {
+    return 'La fecha de vencimiento debe ser posterior a hoy';
+  }
+  return null;
+};
 
 export const reglas = {
   personal: {
@@ -119,6 +160,23 @@ export const reglas = {
       personal.idioma === 'es' || personal.idioma === 'en'
         ? null
         : 'Selecciona un idioma',
+
+    // La contraseña no se recorta ni se normaliza; Firebase exige mínimo 6
+    contrasena: ({ personal }) => {
+      const { contrasena } = personal;
+      if (vacio(contrasena)) return 'La contraseña es obligatoria';
+      if (contrasena.length < 6) {
+        return 'La contraseña debe tener mínimo 6 caracteres';
+      }
+      return null;
+    },
+
+    confirmacion: ({ personal }) => {
+      const { confirmacion, contrasena } = personal;
+      if (vacio(confirmacion)) return 'Confirma tu contraseña';
+      if (confirmacion !== contrasena) return 'Las contraseñas no coinciden';
+      return null;
+    },
   },
 
   vehiculo: {
@@ -178,7 +236,55 @@ export const reglas = {
         : null,
   },
 
-  documentos: {}, // pestaña 3: pendiente
+  documentos: {
+    licenciaNumero: ({ documentos }) => {
+      const { licenciaNumero } = documentos;
+      if (vacio(licenciaNumero)) return 'El número de licencia es obligatorio';
+      if (!/^\d{6,15}$/.test(licenciaNumero)) {
+        return 'Debe ser numérico, entre 6 y 15 dígitos';
+      }
+      return null;
+    },
+
+    licenciaFoto: ({ documentos }) =>
+      !documentos.licenciaFoto ? 'La foto de la licencia es obligatoria' : null,
+
+    licenciaVencimiento: ({ documentos }) =>
+      errorVencimiento(documentos.licenciaVencimiento, 'de la licencia'),
+
+    soatFoto: ({ documentos }) =>
+      !documentos.soatFoto ? 'La foto del SOAT es obligatoria' : null,
+
+    soatVencimiento: ({ documentos }) =>
+      errorVencimiento(documentos.soatVencimiento, 'del SOAT'),
+
+    // Solo se exige si el año del vehículo lo requiere
+    revisionFoto: ({ documentos, vehiculo }) =>
+      requiereRevision(vehiculo.anio) && !documentos.revisionFoto
+        ? 'La foto de la revisión técnico-mecánica es obligatoria'
+        : null,
+
+    revisionVencimiento: ({ documentos, vehiculo }) =>
+      requiereRevision(vehiculo.anio)
+        ? errorVencimiento(documentos.revisionVencimiento, 'de la revisión')
+        : null,
+
+    correoMercadoPago: ({ documentos }) => {
+      const { correoMercadoPago } = documentos;
+      if (vacio(correoMercadoPago)) {
+        return 'El correo de Mercado Pago es obligatorio';
+      }
+      if (!validarCorreo(correoMercadoPago)) {
+        return 'Ingresa un correo válido (ej: nombre@dominio.com)';
+      }
+      return null;
+    },
+
+    aceptaTerminos: ({ documentos }) =>
+      documentos.aceptaTerminos
+        ? null
+        : 'Debes aceptar los términos y la comisión para continuar',
+  },
 };
 
 export const obtenerError = (seccion, campo, registro) => {
@@ -201,6 +307,9 @@ const normalizadores = {
     placa: (texto) => texto.replace(/\s/g, '').toUpperCase(),
     anio: soloDigitos,
     capacidad: soloDigitos,
+  },
+  documentos: {
+    licenciaNumero: soloDigitos,
   },
 };
 

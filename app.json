@@ -15,13 +15,29 @@
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
-      }
+      },
+      "permissions": [
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "@react-native-community/datetimepicker"
-    ]
+      "@react-native-community/datetimepicker",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Uber necesita tu ubicación para mostrarte en el mapa y actualizar tu posición cuando estés disponible como conductor."
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "1f918339-9fcd-43a3-814b-7a22496c0c2d"
+      }
+    },
+    "owner": "luisgomez1"
   }
 }

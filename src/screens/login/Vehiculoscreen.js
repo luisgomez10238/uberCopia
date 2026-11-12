@@ -1,11 +1,11 @@
 import React from 'react';
 import { ScrollView, StyleSheet, View, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useRegistration } from '../context/RegistrationContext';
-import FormField from '../components/FormField';
-import DropdownField from '../components/DropdownField';
-import ImagePickerField from '../components/ImagePickerField';
-import { CATEGORIAS_VEHICULO, COLORES_VEHICULO } from '../constants/options';
+import { useRegistration } from '../../context/RegistrationContext';
+import FormField from '../../components/Registro/FormField';
+import DropdownField from '../../components/Registro/DropdownField';
+import ImagePickerField from '../../components/Registro/ImagePickerField';
+import { CATEGORIAS_VEHICULO, COLORES_VEHICULO } from '../../constants/options';
 
 export default function VehiculoScreen() {
   const { registro, errores, actualizarVehiculo, tocarCampo } = useRegistration();

@@ -1,11 +1,11 @@
-
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 
 import DatosPersonalesScreen from './Datospersonalesscreen';
-import VehiculoScreen from './Vehiculoscreen';
-import { useRegistration } from '../context/RegistrationContext';
+import VehiculoScreen from '../login/Vehiculoscreen';
+import DocumentosScreen from './Documentosscreen';
+import { useRegistration } from '../../context/RegistrationContext';
 
 const Tab = createBottomTabNavigator();
 
@@ -27,14 +27,12 @@ export default function RegistroConductorScreen() {
         },
 
         tabBarIcon: ({ color, size, focused }) => {
-          const iconName =
-            route.name === 'DatosPersonales'
-              ? focused
-                ? 'person-circle'
-                : 'person-circle-outline'
-              : focused
-                ? 'car-sport'
-                : 'car-sport-outline';
+          const iconos = {
+            DatosPersonales: ['person-circle', 'person-circle-outline'],
+            Vehiculo: ['car-sport', 'car-sport-outline'],
+            Documentos: ['document-text', 'document-text-outline'],
+          };
+          const iconName = iconos[route.name][focused ? 0 : 1];
 
           return (
             <Ionicons
@@ -84,6 +82,17 @@ export default function RegistroConductorScreen() {
         options={{
           title: 'Vehículo',
           tabBarBadge: Object.values(errores.vehiculo).some(Boolean)
+            ? '!'
+            : undefined,
+        }}
+      />
+
+      <Tab.Screen
+        name="Documentos"
+        component={DocumentosScreen}
+        options={{
+          title: 'Documentos',
+          tabBarBadge: Object.values(errores.documentos).some(Boolean)
             ? '!'
             : undefined,
         }}
