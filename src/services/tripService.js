@@ -36,6 +36,33 @@ export const pasajeroABordo = (viajeId, uid) =>
     startedAt: serverTimestamp(),
   });
 
+// Pago en efectivo: el conductor confirma que recibió el dinero.
+// La comisión de este viaje se descuenta del saldo (lo calcula useEarnings
+// cuando el viaje está en estado "paid").
+export const marcarEfectivoCobrado = (viajeId, uid) =>
+  runTransaction(db, async (transaccion) => {
+    const referencia = doc(db, 'trips', viajeId);
+    const resultado = await transaccion.get(referencia);
+
+    if (!resultado.exists()) throw new Error('El viaje ya no existe.');
+
+    const datos = resultado.data();
+
+    if (datos.driverId !== uid) throw new Error('Este viaje no es tuyo.');
+    if (datos.paymentMethod !== 'cash') {
+      throw new Error('Este viaje no se paga en efectivo.');
+    }
+    if (datos.status !== 'completed') {
+      throw new Error('El viaje ya fue cobrado o aún no termina.');
+    }
+
+    transaccion.update(referencia, {
+      status: 'paid',
+      paymentStatus: 'cash',
+      paidAt: serverTimestamp(),
+    });
+  });
+
 export const cancelarViaje = (viajeId, uid) =>
   cambiarEstado(viajeId, uid, ['accepted', 'driver_arriving'], 'cancelled', {
     cancelledAt: serverTimestamp(),

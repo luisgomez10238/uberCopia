@@ -107,8 +107,7 @@ export default function ViajeEnCursoScreen({ route, navigation }) {
   useEffect(() => {
     if (viaje?.status === 'cancelled') navigation.goBack();
     if (viaje?.status === 'completed' || viaje?.status === 'paid') {
-      // Provisional: el resumen de cobro es el siguiente paso
-      navigation.replace('DetalleViaje', { viajeId });
+      navigation.replace('ResumenViaje', { viajeId });
     }
   }, [viaje?.status, navigation, viajeId]);
 

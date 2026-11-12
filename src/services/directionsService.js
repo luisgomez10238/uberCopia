@@ -1,33 +1,34 @@
 import { decodificarPolyline } from '../utils/polyline';
 
-const CLAVE = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY;
+// Ruta con OSRM (OpenStreetMap): gratis y sin llave. El documento lo lista
+// como alternativa a Google Directions. Es un servidor público de demostración.
+const URL_OSRM = 'https://router.project-osrm.org/route/v1/driving';
 
 // Una sola consulta por tramo del viaje (recogida o destino),
-// nunca en cada movimiento del conductor: así se cuida el cupo gratuito.
+// nunca en cada movimiento del conductor.
 export const obtenerRuta = async (origen, destino) => {
-  if (!CLAVE) {
-    throw new Error('Falta EXPO_PUBLIC_GOOGLE_MAPS_API_KEY en el archivo .env');
+  // OSRM recibe las coordenadas como longitud,latitud
+  const coordenadas =
+    `${origen.lng},${origen.lat};${destino.lng},${destino.lat}`;
+
+  const respuesta = await fetch(
+    `${URL_OSRM}/${coordenadas}?overview=full&geometries=polyline`
+  );
+
+  if (!respuesta.ok) {
+    throw new Error(`No se pudo calcular la ruta (HTTP ${respuesta.status})`);
   }
 
-  const url =
-    'https://maps.googleapis.com/maps/api/directions/json' +
-    `?origin=${origen.lat},${origen.lng}` +
-    `&destination=${destino.lat},${destino.lng}` +
-    `&mode=driving&language=es&key=${CLAVE}`;
-
-  const respuesta = await fetch(url);
   const datos = await respuesta.json();
+  const ruta = datos.routes?.[0];
 
-  if (datos.status !== 'OK' || !datos.routes?.length) {
-    throw new Error(`No se pudo calcular la ruta (${datos.status})`);
+  if (datos.code !== 'Ok' || !ruta?.geometry) {
+    throw new Error(`No se pudo calcular la ruta (${datos.code || 'SIN_RUTA'})`);
   }
-
-  const ruta = datos.routes[0];
-  const tramo = ruta.legs[0];
 
   return {
-    puntos: decodificarPolyline(ruta.overview_polyline.points),
-    distanciaKm: tramo.distance.value / 1000,
-    duracionMin: Math.round(tramo.duration.value / 60),
+    puntos: decodificarPolyline(ruta.geometry),
+    distanciaKm: ruta.distance / 1000,
+    duracionMin: Math.round(ruta.duration / 60),
   };
 };

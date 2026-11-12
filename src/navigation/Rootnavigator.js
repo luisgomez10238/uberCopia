@@ -7,6 +7,7 @@ import RegistroConductorScreen from '../screens/login/RegistroConductorScreen';
 import PendienteScreen from '../screens/PendienteScreen';
 import DetalleViajeScreen from '../screens/historial/DetalleViajeScreen';
 import ViajeEnCursoScreen from '../screens/viaje/ViajeEnCursoScreen';
+import ResumenViajeScreen from '../screens/viaje/ResumenViajeScreen';
 import DriverDrawer from './DriverDrawer';
 
 const Stack = createNativeStackNavigator();
@@ -39,6 +40,11 @@ export default function RootNavigator() {
             <Stack.Screen
               name="ViajeEnCurso"
               component={ViajeEnCursoScreen}
+              options={{ gestureEnabled: false }}
+            />
+            <Stack.Screen
+              name="ResumenViaje"
+              component={ResumenViajeScreen}
               options={{ gestureEnabled: false }}
             />
             <Stack.Screen
