@@ -29,7 +29,7 @@ const ref = await admin.firestore().collection('trips').add({
   commissionRate: 0.2,
   driverEarnings: 12000,
   tip: 0,
-  paymentMethod: 'card',
+  paymentMethod: 'stripe',
   paymentStatus: 'pending',
   origin: { lat: 6.2442, lng: -75.5812, address: 'Origen de prueba' },
   destination: { lat: 6.2086, lng: -75.5659, address: 'Destino de prueba' },
