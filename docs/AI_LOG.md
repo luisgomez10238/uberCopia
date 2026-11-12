@@ -1,10 +1,7 @@
 # Bitácora de uso de IA — Deysi Gómez
 
 Herramienta usada en todas las entradas: **Claude (Anthropic)**.
-Los prompts están copiados tal como se escribieron. Los campos marcados con
-**(completar)** deben ser llenados por la integrante con sus propias palabras
-antes de entregar, especialmente *Aprendizaje*: el documento permite que cualquier
-integrante sea llamada a explicar un bloque asistido por IA.
+Los prompts están copiados tal como se escribieron. 
 
 > Esta bitácora se redactó a partir del historial de la conversación. El resumen
 > de cada respuesta es breve; los hashes son los commits donde quedó el cambio.
@@ -135,7 +132,6 @@ integrante sea llamada a explicar un bloque asistido por IA.
 - Qué se usó / modificó / descartó: Se descartó Google Directions/Routes API porque Google exigía un pago único de activación; se usó OSRM, que el documento lista como alternativa gratuita.
 - Archivos y commit: src/screens/viaje/ViajeEnCursoScreen.js, src/Hooks/useActiveTrip.js, src/services/tripService.js, src/services/directionsService.js, src/utils/polyline.js — 898f3a7 y edcd610
 - Verificación: Se probó en el celular: aceptar el viaje, pasajero a bordo, finalizar y ver la ruta en el mapa.
-### Entrada #10
 - Aprendizaje: Un viaje tiene dos tramos: del conductor al punto de recogida y de la recogida al destino. La ruta se pide cuando empieza cada tramo, no cada vez que cambia la ubicación del conductor, para evitar solicitudes innecesarias y repetir cálculos de rutas que no han cambiado.
 
 ### Entrada #11
@@ -192,7 +188,7 @@ integrante sea llamada a explicar un bloque asistido por IA.
 
 ### Entrada #15
 - Fecha: 2026-11-12
-- Integrante: Deysi Lorena Gomez
+- Integrante: Luis Alberto Gomez
 - Herramienta: Claude
 - Objetivo: Notificaciones push de nuevas solicitudes con `expo-notifications`
 - Prompt: "Vamos a crear las notificaiones push"
@@ -201,4 +197,17 @@ integrante sea llamada a explicar un bloque asistido por IA.
 - Qué se usó / modificó / descartó: Se descartó `@react-native-firebase/messaging` (FCM directo) por los requisitos de iOS. El documento nombra esa librería, por eso conviene confirmar con el profesor que acepta `expo-notifications`.
 - Archivos y commit: src/Hooks/usePushNotifications.js, src/services/driverStatusService.js, src/screens/Inicioscreen.js, crearViajePrueba.mjs, app.json — (agregar hash)
 - Verificación: Se probó en un iPhone físico con Expo Go: al ejecutar el script que crea el viaje de prueba, llegó la notificación. En Expo Go aparece con el nombre y el icono de Expo Go.
-- Aprendizaje: Se compre que para Utilzar Fcm Se necesita una pro build nativa que solo se puede compliar en un ios o Con una cuenta de pago
+- Aprendizaje: Se aprendio que para Utilzar Fcm Se necesita una pro build nativa que solo se puede compliar en un ios o Con una cuenta de pago
+
+### Entrada #16
+- Fecha: 2026-11-12
+- Integrante: Luis Alberto Gomez
+- Herramienta: Claude
+- Objetivo: Backend de pagos con Stripe en modo prueba (sesión de pago, webhook) y botón de pago con tarjeta en la app
+- Prompt: "Creo que ya tengo el stripe en modo prueba"
+- Otros prompts: "Vamos con Stripe en modo prueba", "Como puedo hacer lo de los pagos?", "si las veo", "ya hice el pago", "no hay boton de pagar"
+- Resumen de la respuesta: Servidor Express con dos rutas: `/create-checkout-session`, que lee la tarifa y la propina desde Firestore y crea la sesión de Stripe Checkout en COP (moneda de dos decimales, monto en pesos × 100), y `/webhook`, que valida la firma de Stripe y deja el viaje en `paid` con Firebase Admin. En la app, un servicio que pide la sesión y un botón "Pagar con tarjeta" en el resumen del viaje, más un acceso desde el detalle del historial. Un script con Admin SDK crea viajes de prueba sin depender de las reglas de Firestore.
+- Qué se usó / modificó / descartó: Se descartó Mercado Pago porque la cuenta no permitió crear el Checkout. Se descartó `@stripe/stripe-react-native` porque exige un build de desarrollo y se usa la página de pago alojada de Stripe, que funciona en Expo Go. Se descartó recibir el monto desde la app para no confiar en el cliente. Las claves van solo en `backend/.env` y `serviceAccountKey.json`, ambos ignorados por Git.
+- Archivos y commit: backend/server.js, backend/package.json, backend/.env.example, backend/crearViajeCobro.mjs, src/services/paymentService.js, src/screens/viaje/ResumenViajeScreen.js, src/screens/historial/DetalleViajeScreen.js, .env.example, .gitignore — (agregar hash)
+- Verificación: Se creó una sesión con la tarjeta de prueba 4242 4242 4242 4242 y el Stripe CLI reenvió el evento `checkout.session.completed`. En Firestore el viaje quedó con `status: 'paid'`, `paymentStatus`, `paymentId` y `paidAt`. (Agregar aquí el resultado de la prueba desde el celular.)
+- Aprendizaje: Solo se cambia a paid cuando se llega al mensaje de comprobacion de stripe para que el usuario no pueda volver sin pagar , El COP en Stripe es una moneda de dos decimales. Stripe espera la unidad mínima, los centavos. Por eso 15.000 pesos se envían como 1500000.

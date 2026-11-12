@@ -4,6 +4,7 @@ import {
   ScrollView,
   View,
   Text,
+  Pressable,
   ActivityIndicator,
   StyleSheet,
 } from 'react-native';
@@ -48,7 +49,7 @@ const Estrellas = ({ calificacion }) => {
 
 // Recibe solo el id: el viaje se lee de Firestore (los Timestamp no son
 // valores serializables para los parámetros de navegación).
-export default function DetalleViajeScreen({ route }) {
+export default function DetalleViajeScreen({ route, navigation }) {
   const { viajeId } = route.params;
   const mapRef = useRef(null);
 
@@ -192,6 +193,16 @@ export default function DetalleViajeScreen({ route }) {
           <Estrellas calificacion={viaje.rating} />
         </View>
       </View>
+
+      {/* AI-assisted: see docs/AI_LOG.md #16 */}
+      {viaje.status === 'completed' ? (
+        <Pressable
+          style={styles.botonCobro}
+          onPress={() => navigation.navigate('ResumenViaje', { viajeId })}
+        >
+          <Text style={styles.textoBotonCobro}>Ir a cobrar este viaje</Text>
+        </Pressable>
+      ) : null}
     </ScrollView>
   );
 }
@@ -234,4 +245,12 @@ const styles = StyleSheet.create({
   valor: { fontSize: 14, fontWeight: '600', color: '#172B4D' },
   valorFuerte: { fontSize: 18, fontWeight: 'bold', color: '#1E8E3E' },
   estrellas: { flexDirection: 'row', gap: 2 },
+  botonCobro: {
+    backgroundColor: '#145BB8',
+    borderRadius: 12,
+    paddingVertical: 14,
+    alignItems: 'center',
+    marginTop: 4,
+  },
+  textoBotonCobro: { color: '#FFFFFF', fontSize: 16, fontWeight: '700' },
 });
