@@ -4,6 +4,7 @@ import {
   View,
   Text,
   Pressable,
+  Linking,
   ActivityIndicator,
   ScrollView,
   StyleSheet,
@@ -15,6 +16,7 @@ import { db } from '../../config/firebase';
 import { useSession } from '../../context/SessionContext';
 import EstadoPago from '../../components/Historial/EstadoPago';
 import { marcarEfectivoCobrado } from '../../services/tripService';
+import { crearSesionDePago } from '../../services/paymentService';
 import { formatearCOP, ETIQUETA_PAGO } from '../../utils/format';
 
 const AZUL = '#145BB8';
@@ -57,6 +59,22 @@ export default function ResumenViajeScreen({ route, navigation }) {
       await marcarEfectivoCobrado(viajeId, uid);
     } catch (e) {
       setError(e.message || 'No se pudo registrar el cobro.');
+    } finally {
+      setProcesando(false);
+    }
+  };
+
+  // Abre la página de pago de Stripe en el navegador. Cuando el pago se
+  // confirma, el webhook deja el viaje en "paid" y onSnapshot actualiza la pantalla.
+  const alPagarConTarjeta = async () => {
+    if (procesando) return;
+    setProcesando(true);
+    setError('');
+    try {
+      const url = await crearSesionDePago(viajeId);
+      await Linking.openURL(url);
+    } catch (e) {
+      setError(e.message || 'No se pudo iniciar el pago.');
     } finally {
       setProcesando(false);
     }
@@ -129,6 +147,14 @@ export default function ResumenViajeScreen({ route, navigation }) {
             disabled={procesando}
           >
             <Text style={styles.textoBoton}>Cobro recibido</Text>
+          </Pressable>
+        ) : !esEfectivo && !pagado ? (
+          <Pressable
+            style={[styles.boton, procesando && styles.deshabilitado]}
+            onPress={alPagarConTarjeta}
+            disabled={procesando}
+          >
+            <Text style={styles.textoBoton}>Pagar con tarjeta</Text>
           </Pressable>
         ) : (
           <Pressable style={styles.boton} onPress={alTerminar}>

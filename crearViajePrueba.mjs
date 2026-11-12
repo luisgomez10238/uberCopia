@@ -22,11 +22,11 @@ const { user } = await signInWithEmailAndPassword(auth, CORREO, CLAVE);
 const ref = await addDoc(collection(getFirestore(app), 'trips'), {
   driverId: user.uid,
   passengerId: 'prueba',
-  status: 'requested',
+  status: 'completed',
   category: CATEGORIA,
   distanceKm: 8.5,
   durationMin: 22,
-  paymentMethod: 'cash',
+  paymentMethod: 'card',
   paymentStatus: 'pending',
   tip: 0,
   origin: { ...ORIGEN, address: 'Origen de prueba' },

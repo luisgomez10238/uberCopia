@@ -4,7 +4,6 @@ import { NavigationContainer } from '@react-navigation/native';
 import { RegistrationProvider } from './src/context/RegistrationContext';
 import { SessionProvider } from './src/context/SessionContext';
 import RootNavigator from './src/navigation/RootNavigator';
-SS
 export default function App() {
   return (
     <RegistrationProvider>

@@ -41,3 +41,7 @@ yarn-error.*
 /android
 .env
 
+
+# Backend: clave privada de Firebase Admin
+backend/serviceAccountKey.json
+*serviceAccount*.json
