@@ -10,13 +10,14 @@ export default function EstadoPago({ estado }) {
     rejected: 'Rechazado',
     rechazado: 'Rechazado',
     cash: 'Efectivo',
+    paid: 'Aprobado',
   };
 
   const valor = String(estado || '').toLowerCase();
 
   let color = '#64748B';
 
-  if (['approved', 'aprobado', 'cash'].includes(valor)) {
+  if (['approved', 'aprobado', 'paid', 'cash'].includes(valor)) {
     color = '#16834A';
   } else if (['pending', 'pendiente'].includes(valor)) {
     color = '#B7791F';

@@ -5,6 +5,8 @@ import { useSession } from '../context/SessionContext';
 import LoginScreen from '../screens/login/LoginScreen';
 import RegistroConductorScreen from '../screens/login/RegistroConductorScreen';
 import PendienteScreen from '../screens/PendienteScreen';
+import DetalleViajeScreen from '../screens/historial/DetalleViajeScreen';
+import ViajeEnCursoScreen from '../screens/viaje/ViajeEnCursoScreen';
 import DriverDrawer from './DriverDrawer';
 
 const Stack = createNativeStackNavigator();
@@ -30,7 +32,21 @@ export default function RootNavigator() {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       {tieneSesion ? (
         conductor.status === 'approved' ? (
-          <Stack.Screen name="Drawer" component={DriverDrawer} />
+          <>
+            <Stack.Screen name="Drawer" component={DriverDrawer} />
+            {/* Flujo del viaje (Stack): el detalle abre encima del Drawer.
+                Aquí también irán ViajeEnCurso y ResumenViaje. */}
+            <Stack.Screen
+              name="ViajeEnCurso"
+              component={ViajeEnCursoScreen}
+              options={{ gestureEnabled: false }}
+            />
+            <Stack.Screen
+              name="DetalleViaje"
+              component={DetalleViajeScreen}
+              options={{ headerShown: true, title: 'Detalle del viaje' }}
+            />
+          </>
         ) : (
           <Stack.Screen name="Pendiente" component={PendienteScreen} />
         )

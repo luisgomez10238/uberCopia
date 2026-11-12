@@ -1,4 +1,3 @@
-
 import React from 'react';
 import {
   View,
@@ -10,16 +9,18 @@ import {
   Pressable,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 
 import { useSession } from '../../context/SessionContext';
 import useTripHistory from '../../Hooks/useTripHistory';
 
 import FiltroFecha from '../../components/Historial/FiltroFecha';
-import FiltroPago from '../../components/Historial/FiltroFecha';
+import FiltroPago from '../../components/Historial/FiltroPago';
 import ViajeCard from '../../components/Historial/ViajeCard';
 
 export default function HistorialScreen() {
   const { usuario } = useSession();
+  const navigation = useNavigation();
 
   const {
     viajes,
@@ -98,7 +99,10 @@ export default function HistorialScreen() {
         data={viajes}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <ViajeCard viaje={item} />
+          <ViajeCard
+            viaje={item}
+            onPress={() => navigation.navigate('DetalleViaje', { viajeId: item.id })}
+          />
         )}
         ListHeaderComponent={encabezado}
         contentContainerStyle={styles.lista}

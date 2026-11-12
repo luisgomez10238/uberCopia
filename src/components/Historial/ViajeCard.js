@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import EstadoPago from './EstadoPago';
 
@@ -52,11 +52,22 @@ const metodoTexto = (metodo) => {
     || 'No especificado';
 };
 
-export default function ViajeCard({ viaje }) {
-  const estadoPago = viaje.paymentStatus || viaje.status;
+// Estado de pago que se muestra: Aprobado, Pendiente, Rechazado o Efectivo
+const estadoDePago = (viaje) => {
+  if (String(viaje.paymentMethod || '').toLowerCase() === 'cash') return 'cash';
+  if (viaje.paymentStatus) return viaje.paymentStatus;
+  return viaje.status === 'paid' ? 'approved' : 'pending';
+};
+
+export default function ViajeCard({ viaje, onPress }) {
+  const estadoPago = estadoDePago(viaje);
 
   return (
-    <View style={styles.tarjeta}>
+    <Pressable
+      style={styles.tarjeta}
+      onPress={onPress}
+      accessibilityRole="button"
+    >
       <View style={styles.filaSuperior}>
         <View style={styles.fechaContainer}>
           <Ionicons
@@ -157,7 +168,7 @@ export default function ViajeCard({ viaje }) {
           Pago: {metodoTexto(viaje.paymentMethod)}
         </Text>
       </View>
-    </View>
+    </Pressable>
   );
 }
 
