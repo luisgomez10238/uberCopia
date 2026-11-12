@@ -1,3 +1,4 @@
+// AI-assisted: see docs/AI_LOG.md #9
 import { PRICING } from '../config/pricing';
 
 

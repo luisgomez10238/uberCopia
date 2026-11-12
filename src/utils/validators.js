@@ -1,3 +1,4 @@
+// AI-assisted: see docs/AI_LOG.md #2
 export const validarNombre = (nombre) => {
   return /^[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s]{1,50}$/.test(nombre.trim());
 };

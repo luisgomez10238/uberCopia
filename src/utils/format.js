@@ -1,3 +1,4 @@
+// AI-assisted: see docs/AI_LOG.md #9
 // $19.200 (separador de miles con punto, sin depender de Intl)
 export const formatearCOP = (valor) =>
   `${Number(valor) < 0 ? '-' : ''}$${Math.abs(Math.round(Number(valor) || 0))

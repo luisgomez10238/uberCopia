@@ -1,3 +1,4 @@
+// AI-assisted: see docs/AI_LOG.md #10
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   View,

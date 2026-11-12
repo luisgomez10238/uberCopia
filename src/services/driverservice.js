@@ -1,3 +1,4 @@
+// AI-assisted: see docs/AI_LOG.md #4
 import { createUserWithEmailAndPassword, deleteUser } from 'firebase/auth';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { auth, db } from '../config/firebase';

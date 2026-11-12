@@ -1,3 +1,4 @@
+// AI-assisted: see docs/AI_LOG.md #12
 import React, { useEffect, useState } from 'react';
 import {
   View,

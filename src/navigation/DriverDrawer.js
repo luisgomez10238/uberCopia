@@ -1,3 +1,4 @@
+// AI-assisted: see docs/AI_LOG.md #9
 import React from 'react';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { Ionicons } from '@expo/vector-icons';

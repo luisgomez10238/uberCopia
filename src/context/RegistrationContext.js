@@ -1,3 +1,4 @@
+// AI-assisted: see docs/AI_LOG.md #2
 import React, {
   createContext,
   useContext,

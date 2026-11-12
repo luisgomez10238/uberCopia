@@ -1,3 +1,4 @@
+// AI-assisted: see docs/AI_LOG.md #6
 import React from 'react';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';

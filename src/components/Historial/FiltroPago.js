@@ -1,3 +1,4 @@
+// AI-assisted: see docs/AI_LOG.md #9
 import React from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 

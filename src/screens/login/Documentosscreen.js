@@ -1,3 +1,4 @@
+// AI-assisted: see docs/AI_LOG.md #4
 import React, { useMemo, useState } from 'react';
 import {
   ScrollView,

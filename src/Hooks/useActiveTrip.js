@@ -1,3 +1,4 @@
+// AI-assisted: see docs/AI_LOG.md #10
 import { useEffect, useState } from 'react';
 import { collection, query, where, onSnapshot } from 'firebase/firestore';
 import { db } from '../config/firebase';

@@ -1,3 +1,4 @@
+// AI-assisted: see docs/AI_LOG.md #7
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
@@ -23,6 +24,7 @@ import { useSession } from '../context/SessionContext';
 import useDriverLocation from '../Hooks/useDriverLocation';
 import useTripRequests from '../Hooks/useTripRequests';
 import useActiveTrip from '../Hooks/useActiveTrip';
+import usePushNotifications from '../Hooks/usePushNotifications';
 
 import {
   actualizarDisponibilidad,
@@ -50,6 +52,9 @@ export default function InicioScreen() {
   const mapRef = useRef(null);
 
   const uid = usuario?.uid;
+
+  // Registra el celular para recibir avisos de nuevas solicitudes
+  usePushNotifications({ uid });
 
   const [disponible, setDisponible] = useState(false);
   const [preferenciaLista, setPreferenciaLista] = useState(false);

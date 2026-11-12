@@ -1,3 +1,4 @@
+// AI-assisted: see docs/AI_LOG.md #10
 import { decodificarPolyline } from '../utils/polyline';
 
 // Ruta con OSRM (OpenStreetMap): gratis y sin llave. El documento lo lista

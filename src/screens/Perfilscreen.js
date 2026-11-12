@@ -18,7 +18,7 @@ import { obtenerError } from '../utils/validators';
 import { guardarIdioma } from '../utils/preferences';
 import { actualizarPerfil } from '../services/profileService';
 
-// AI-assisted:
+// AI-assisted: see docs/AI_LOG.md #7
 const ETIQUETA_CATEGORIA = { economy: 'Económico', xl: 'XL', premium: 'Premium' };
 
 // 'YYYY-MM-DD' -> 'DD/MM/YYYY'

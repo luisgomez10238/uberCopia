@@ -1,3 +1,4 @@
+// AI-assisted: see docs/AI_LOG.md #5
 // Sube imágenes a Cloudinary con un "upload preset" SIN FIRMA (unsigned).
 // Así el API secret de Cloudinary nunca va en la app.
 const CLOUD_NAME = process.env.EXPO_PUBLIC_CLOUDINARY_CLOUD_NAME;

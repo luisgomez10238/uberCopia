@@ -1,10 +1,10 @@
+// AI-assisted: see docs/AI_LOG.md #4
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { initializeAuth, getAuth, getReactNativePersistence } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// Las variables EXPO_PUBLIC_* se leen del archivo .env (excluido de Git).
-// Se escriben completas, sin dinámicos, para que Expo las reemplace al compilar.
+
 const firebaseConfig = {
   apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN,

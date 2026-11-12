@@ -15,7 +15,7 @@ import { db } from '../config/firebase';
 import { calculateFare } from '../utils/calculateFare';
 
 const TIEMPO_SOLICITUD = 15;
-// AI-assisted:
+// AI-assisted: see docs/AI_LOG.md #8
 export default function useTripRequests({
   driverId,
   activo,

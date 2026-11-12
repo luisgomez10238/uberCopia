@@ -1,3 +1,4 @@
+// AI-assisted: see docs/AI_LOG.md #10
 // Decodifica el formato "encoded polyline" de Google Directions
 // y devuelve [{ lat, lng }, ...]
 export const decodificarPolyline = (texto) => {

@@ -1,6 +1,7 @@
+// AI-assisted: see docs/AI_LOG.md #11
 import { initializeApp } from 'firebase/app';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
-import { getFirestore, collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { getFirestore, collection, addDoc, doc, getDoc, serverTimestamp } from 'firebase/firestore';
 
 const CORREO = 'luisgomezpku@gmail.com'; // CAMBIAR
 const CLAVE = 'lorena12';                       // CAMBIAR
@@ -34,4 +35,27 @@ const ref = await addDoc(collection(getFirestore(app), 'trips'), {
 });
 
 console.log('Viaje creado:', ref.id);
+
+// Aviso push al celular del conductor (token guardado por la app en drivers/{uid})
+const perfil = await getDoc(doc(getFirestore(app), 'drivers', user.uid));
+const token = perfil.data()?.expoPushToken;
+
+if (token) {
+  const respuesta = await fetch('https://exp.host/--/api/v2/push/send', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+    body: JSON.stringify({
+      to: token,
+      title: '¡Nuevo viaje!',
+      body: 'Tienes una solicitud entrante',
+      sound: 'default',
+      channelId: 'default',
+      data: { tripId: ref.id },
+    }),
+  });
+  console.log('Respuesta de Expo:', await respuesta.text());
+} else {
+  console.log('El conductor aún no tiene token push (abre la app en el celular primero).');
+}
+
 process.exit(0);

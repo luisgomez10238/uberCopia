@@ -1,3 +1,4 @@
+// AI-assisted: see docs/AI_LOG.md #10
 import { doc, runTransaction, serverTimestamp } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import { PRICING } from '../config/pricing';

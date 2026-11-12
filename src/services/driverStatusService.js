@@ -15,3 +15,10 @@ export const actualizarUbicacion = (uid, { lat, lng }) =>
     location: { lat, lng },
     locationUpdatedAt: serverTimestamp(),
   });
+
+// Token de notificaciones push del celular (Expo Push Service)
+export const guardarTokenPush = (uid, token) =>
+  updateDoc(doc(db, 'drivers', uid), {
+    expoPushToken: token,
+    pushTokenUpdatedAt: serverTimestamp(),
+  });
